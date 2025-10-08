@@ -1,0 +1,182 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absensi Guru</title>
+  <link rel="stylesheet" href="absenmini.css">
+</head>
+<body>
+<!-- LOGIN -->
+  <div id="loginView" class="view">
+    <h3 class="judul">Login Guru</h3>
+    <label>Username:
+      <input type="text" id="username" class="input" />
+    </label>
+    <label>Password:
+      <input type="password" id="password" class="input" />
+    </label>
+    <button onclick="login()" class="btn-green">Login</button>
+    <div id="loginMsg" class="message"></div>
+  </div>
+
+<!-- MENU UTAMA -->
+<div id="menuView" class="view hidden">
+  <h3 class="judul">Menu Utama</h3>
+  <div id="menuGuru" class="hidden">
+    <button onclick="navigateTo('absenView')" class="btn-green">📆️ Absensi Guru</button>
+  </div>
+  <div id="menuAdmin" class="hidden">
+    <button onclick="navigateTo('absenAdminView')" class="btn-green">📆️ Absensi Admin</button>
+  </div>
+  <button onclick="navigateTo('ijinView')" class="btn-blue">📝 Ajukan Ijin</button>
+  <button onclick="navigateTo('badalView')" class="btn-orange">🔄 Badal</button>
+  <button onclick="navigateTo('kegiatanView')" class="btn-purple">📋 Absen Kegiatan</button>
+  <button onclick="logout()" class="btn-red">Logout</button>
+</div>
+
+  <!-- IJIN -->
+  <div id="ijinView" class="view hidden">
+    <h3 class="judul">Form Ijin</h3>
+    <label>Nama:
+      <input type="text" id="ijinNama" readonly class="input" />
+    </label>
+    <label>Cabang:
+      <select id="ijinCabang" class="input"></select>
+    </label>
+    <label>Tanggal Ijin:
+      <input type="date" id="ijinTanggalMulai" class="input" />
+      <input type="date" id="ijinTanggalAkhir" class="input" />
+    </label>
+    <label>Alasan:
+      <textarea id="ijinAlasan" class="input"></textarea>
+    </label>
+    <label>Konfirmasi:
+      <select id="ijinKonfirmasi" class="input">
+        <option value="">Konfirmasi ke Koordinator?</option>
+        <option value="Sudah">Sudah</option>
+        <option value="Belum">Belum</option>
+      </select>
+    </label>
+    <button onclick="submitIjin()" class="btn-blue">Kirim Ijin</button>
+    <button onclick="navigateTo('menuView')" class="btn-gray">⬅ Kembali ke Menu</button>
+    <div id="ijinMsg" class="message"></div>
+  </div>
+
+  <!-- BADAL -->
+  <div id="badalView" class="view hidden">
+    <h3 class="judul">Form Badal</h3>
+    <p class="status-lokasi" id="lokasiStatusBadal">📍 Mengambil lokasi...</p>
+    <label>Nama:
+      <input type="text" id="badalNama" readonly class="input" />
+    </label>
+    <label>Cabang:
+      <select id="badalCabang" class="input"></select>
+    </label>
+    <label>Guru yang Dibadalkan:
+      <select id="badalGuru" class="input"></select>
+    </label>
+    <label>Rombel:
+      <select id="badalRombel" class="input"></select>
+    </label>
+    <label>Waktu:
+      <select id="badalWaktu" class="input"></select>
+    </label>
+    <input type="hidden" id="latitude" />
+    <input type="hidden" id="longitude" />
+    <input type="hidden" id="jarak" />
+    <button onclick="submitBadal()" class="btn-orange">Kirim Badal</button>
+    <button type="button" onclick="getLocation('Badal')" class="btn-blue">🔄 Refresh Lokasi</button>
+    <button onclick="navigateTo('menuView')" class="btn-gray">⬅ Kembali ke Menu</button>
+    <div id="badalMsg" class="message"></div>
+  </div>
+
+<!-- KEGIATAN -->
+  <div id="kegiatanView" class="view hidden">
+    <h3 class="judul">Form Kegiatan</h3>
+    <p class="status-lokasi" id="lokasiStatusKegiatan">📍 Mengambil lokasi...</p>
+    <label>Nama:
+      <input type="text" id="kegiatanNama" readonly class="input" />
+    </label>
+    <label>Cabang:
+      <select id="kegiatanCabang" class="input"></select>
+    </label>
+    <label>Kegiatan:
+      <select id="kegiatan" class="input"></select>
+    </label>
+    <label>Catatan:
+      <textarea id="kegiatanCatatan" class="input"></textarea>
+    </label>
+    <input type="hidden" id="latitude" />
+    <input type="hidden" id="longitude" />
+    <input type="hidden" id="jarak" />
+    <button onclick="submitKegiatan()" class="btn-orange">Kirim Kegiatan</button>
+    <button type="button" onclick="getLocation('Kegiatan')" class="btn-blue">🔄 Refresh Lokasi</button>
+    <button onclick="navigateTo('menuView')" class="btn-gray">⬅ Kembali ke Menu</button>
+    <div id="kegiatanMsg" class="message"></div>
+  </div>
+
+  <!-- ABSEN -->
+  <div id="absenView" class="view hidden">
+    <h3 class="judul">Absensi Guru</h3>
+    <form id="absenForm" onsubmit="submitAbsen(); return false;" class="form">
+      <p class="status-lokasi" id="lokasiStatusAbsen">📍 Mengambil lokasi...</p>
+      <label>Cabang:
+        <select id="absenCabang" class="input"></select>
+      </label>
+      <label>Nama Guru:
+        <input type="text" id="nama" readonly class="input" />
+      </label>
+      <label>Rombel:
+        <select id="absenRombel" class="input"></select>
+      </label>
+      <label>Waktu:
+        <select id="absenWaktu" class="input"></select>
+      </label>
+      <input type="hidden" id="latitude" />
+      <input type="hidden" id="longitude" />
+      <input type="hidden" id="jarak" />
+      <button type="button" onclick="getLocation('Absen')" class="btn-blue" id="btnRefreshLokasi">🔄 Refresh Lokasi</button>
+      <button type="submit" class="btn-green" id="submitBtn">Submit Absen</button>
+      <button type="button" onclick="logout()" class="btn-red">Logout</button>
+      <button type="button" onclick="navigateTo('menuView')" class="btn-gray">⬅ Kembali ke Menu</button>
+      <div id="absenMsg" class="message"></div>
+    </form>
+  </div>
+
+  <!-- ABSEN ADMIN -->
+  <div id="absenAdminView" class="view hidden">
+    <h3 class="judul">Absensi Admin</h3>
+    <form id="absenAdminForm" onsubmit="submitAbsenAdmin(); return false;" class="form">
+      <p class="status-lokasi" id="lokasiStatusAdmin">📍 Mengambil lokasi...</p>
+      <label>Cabang:
+        <select id="adminCabang" class="input"></select>
+      </label>
+      <label>Nama Admin:
+        <input type="text" id="adminNama" readonly class="input" />
+      </label>
+      <label>Waktu:
+      <input type="text" id="realTime" class="input" readonly />
+      </label>
+      <input type="hidden" id="latitude" />
+      <input type="hidden" id="longitude" />
+      <input type="hidden" id="jarak" />
+      <button type="button" onclick="getLocation('Absen')" class="btn-blue" id="btnRefreshLokasi">🔄 Refresh Lokasi</button>
+      <button type="submit" class="btn-green" id="submitBtn">Submit Absen</button>
+      <button type="button" onclick="logout()" class="btn-red">Logout</button>
+      <button type="button" onclick="navigateTo('menuView')" class="btn-gray">⬅ Kembali ke Menu</button>
+      <div id="absenMsg" class="message"></div>
+    </form>
+  </div>
+
+    <!-- SUCCESS BOX -->
+  <div id="successView" class="view hidden">
+    <h3 class="judul" id="successMessage">✅ Berhasil!</h3>
+    <button onclick="navigateTo('menuView')" class="btn-blue">⬅ Kembali ke Menu</button>
+    <button onclick="logout()" class="btn-red">Logout</button>
+  </div>
+
+ <script src="absenrolescript.js"></script>
+</body>
+</html>
